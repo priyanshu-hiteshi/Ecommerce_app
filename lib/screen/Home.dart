@@ -12,12 +12,72 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<List<Product>> futureProducts;
+  String? selectedCategory; // To track the selected category
 
   @override
   void initState() {
     super.initState();
-    // Fetch products when the widget is initialized
-    futureProducts = ProductService().fetchProducts();
+    // Fetch all products initially
+    fetchProducts();
+  }
+
+  void fetchProducts({String? category}) {
+    setState(() {
+      if (category == null) {
+        futureProducts = ProductService().fetchProducts();
+      } else {
+        futureProducts = ProductService().fetchProductsByCategory(category);
+      }
+    });
+  }
+
+  void showCategoryFilterModal(BuildContext context) {
+    // Show a bottom modal to select the category
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('All Products'),
+              onTap: () {
+                Navigator.pop(context);
+                fetchProducts(); // Fetch all products
+              },
+            ),
+            ListTile(
+              title: const Text("Electronics"),
+              onTap: () {
+                Navigator.pop(context);
+                fetchProducts(category: "electronics");
+              },
+            ),
+            ListTile(
+              title: const Text("Jewelery"),
+              onTap: () {
+                Navigator.pop(context);
+                fetchProducts(category: "jewelery");
+              },
+            ),
+            ListTile(
+              title: const Text("Men's Clothing"),
+              onTap: () {
+                Navigator.pop(context);
+                fetchProducts(category: "men's clothing");
+              },
+            ),
+            ListTile(
+              title: const Text("Women's Clothing"),
+              onTap: () {
+                Navigator.pop(context);
+                fetchProducts(category: "women's clothing");
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -26,6 +86,14 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text('All Products'),
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              showCategoryFilterModal(context); // Open filter modal
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<Product>>(
         future: futureProducts, // Use the initialized future

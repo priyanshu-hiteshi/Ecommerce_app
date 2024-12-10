@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'screen/Home.dart'; // Assuming Home screen is in this file
 import 'screen/auth/login.dart'; // Assuming Login screen is in this file
 import 'provider/bottom_nav_bar_provider.dart'; // BottomNavBar provider
+import 'provider/cart_provider.dart'; // Import CartProvider
 import 'widgets/bottom_navbar.dart'; // BottomNavBar widget
 
 void main() async {
@@ -16,8 +17,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // Ensure BottomNavBarProvider is correctly placed here
+        // BottomNavBarProvider for managing navigation
         ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
+        // CartProvider for managing the cart functionality
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MyApp(token: token),
     ),

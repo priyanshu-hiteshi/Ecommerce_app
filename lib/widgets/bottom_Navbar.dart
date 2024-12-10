@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/bottom_nav_bar_provider.dart';
+import '../provider/cart_provider.dart'; // Import CartProvider
 import '../screen/Home.dart';
 import '../screen/user/profile.dart';
 import '../screen/category/category.dart';
@@ -22,30 +23,62 @@ class BottomNavbar extends StatelessWidget {
     return Consumer<BottomNavBarProvider>(
       builder: (context, bottomNavProvider, child) {
         return Scaffold(
-          body: screens[bottomNavProvider.currentIndex], // Display the selected screen
+          body: screens[
+              bottomNavProvider.currentIndex], // Display the selected screen
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            currentIndex: bottomNavProvider.currentIndex, // Get the current index from the provider
+            currentIndex: bottomNavProvider
+                .currentIndex, // Get the current index from the provider
             selectedItemColor: Colors.deepPurple,
             unselectedItemColor: Colors.grey,
             onTap: (index) {
-              bottomNavProvider.updatedIndex(index); // Update the index in the provider
+              bottomNavProvider
+                  .updatedIndex(index); // Update the index in the provider
             },
-            items: const [
-              BottomNavigationBarItem(
+            items: [
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
-                
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.category),
                 label: 'Categories',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart),
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const Icon(Icons.shopping_cart),
+                    // Cart count badge
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Consumer<CartProvider>(
+                        builder: (context, cartProvider, child) {
+                          return cartProvider.cartItems.isNotEmpty
+                              ? Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    '${cartProvider.cartItems.length}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 label: 'Cart',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Profile',
               ),

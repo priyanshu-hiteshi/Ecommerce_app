@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart'; // Import the Product model
+import 'package:provider/provider.dart';
+import '../models/product.dart';
+import '../provider/cart_provider.dart'; // Import CartProvider
 
 class ProductDetail extends StatelessWidget {
-  final Product product; // Declare the product parameter
+  final Product product;
 
-  // Accept the product as a named parameter
   const ProductDetail({super.key, required this.product});
 
   @override
@@ -19,8 +20,23 @@ class ProductDetail extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(product.image,
-                height: 250, width: double.infinity, fit: BoxFit.cover),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        FullScreenImage(imageUrl: product.image),
+                  ),
+                );
+              },
+              child: Image.network(
+                product.image,
+                height: 250,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               product.title,
@@ -39,11 +55,46 @@ class ProductDetail extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Add to cart logic
+                // Add to cart using CartProvider
+                Provider.of<CartProvider>(context, listen: false)
+                    .addToCart(product);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${product.title} added to cart!')),
+                );
               },
               child: const Text('Add to Cart'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FullScreenImage extends StatelessWidget {
+  final String imageUrl;
+
+  const FullScreenImage({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Product Image"),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          panEnabled: true,
+          boundaryMargin: const EdgeInsets.all(20),
+          minScale: 0.5,
+          maxScale: 3.0,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+          ),
         ),
       ),
     );
