@@ -53,17 +53,34 @@ class ProductDetail extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Add to cart using CartProvider
-                Provider.of<CartProvider>(context, listen: false)
-                    .addToCart(product);
+            // Check if the product is already in the cart
+            Consumer<CartProvider>(
+              builder: (context, cartProvider, child) {
+                final isInCart = cartProvider.cartItems.containsKey(product.id);
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${product.title} added to cart!')),
-                );
+                return isInCart
+                    ? const Text(
+                        'Added in Cart',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : ElevatedButton(
+                        onPressed: () {
+                          // Add to cart using CartProvider
+                          cartProvider.addToCart(product);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('${product.title} added to cart!')),
+                          );
+                        },
+                        child: const Text('Add to Cart'),
+                      );
               },
-              child: const Text('Add to Cart'),
             ),
           ],
         ),
