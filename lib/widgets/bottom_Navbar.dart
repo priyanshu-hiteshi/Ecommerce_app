@@ -30,7 +30,7 @@ class BottomNavbar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(50),
                 topRight: Radius.circular(50),
                 bottomLeft: Radius.circular(50),
@@ -51,29 +51,20 @@ class BottomNavbar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                IconButton(
-                  icon: Icon(Icons.home,
-                      color: bottomNavProvider.currentIndex == 0
-                          ? Colors.deepPurple
-                          : Colors.grey),
-                  onPressed: () => bottomNavProvider.updatedIndex(0),
+                const KNavBarIconButton(
+                  iconData: Icons.home,
+                  index: 0,
                 ),
-                IconButton(
-                  icon: Icon(Icons.category,
-                      color: bottomNavProvider.currentIndex == 1
-                          ? Colors.deepPurple
-                          : Colors.grey),
-                  onPressed: () => bottomNavProvider.updatedIndex(1),
+                const KNavBarIconButton(
+                  iconData: Icons.category,
+                  index: 1,
                 ),
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.shopping_cart,
-                          color: bottomNavProvider.currentIndex == 2
-                              ? Colors.deepPurple
-                              : Colors.grey),
-                      onPressed: () => bottomNavProvider.updatedIndex(2),
+                    const KNavBarIconButton(
+                      iconData: Icons.shopping_cart,
+                      index: 2,
                     ),
                     Positioned(
                       right: -6,
@@ -83,7 +74,7 @@ class BottomNavbar extends StatelessWidget {
                           return cartProvider.cartItems.isNotEmpty
                               ? Container(
                                   padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: Colors.red,
                                     shape: BoxShape.circle,
                                   ),
@@ -101,16 +92,36 @@ class BottomNavbar extends StatelessWidget {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.account_circle,
-                      color: bottomNavProvider.currentIndex == 3
-                          ? Colors.deepPurple
-                          : Colors.grey),
-                  onPressed: () => bottomNavProvider.updatedIndex(3),
+                const KNavBarIconButton(
+                  iconData: Icons.account_circle,
+                  index: 3,
                 ),
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class KNavBarIconButton extends StatelessWidget {
+  final int index;
+  final IconData iconData;
+
+  const KNavBarIconButton(
+      {super.key, required this.index, required this.iconData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<BottomNavBarProvider>(
+      builder: (context, bottomNavProvider, child) {
+        return IconButton(
+          icon: Icon(iconData,
+              color: bottomNavProvider.currentIndex == index
+                  ? Colors.deepPurple
+                  : Colors.grey),
+          onPressed: () => bottomNavProvider.updatedIndex(index),
         );
       },
     );

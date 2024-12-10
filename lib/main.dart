@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter App',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.yellow,
       ),
       // Use BottomNavbar if the user is logged in, else use Login screen
       home: (token?.isNotEmpty ?? false) ? const BottomNavbar() : const Login(),

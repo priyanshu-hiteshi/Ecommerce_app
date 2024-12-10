@@ -11,79 +11,122 @@ class ProductDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Consumer<CartProvider>(
+        builder: (context, cartProvider, child) {
+          final isInCart = cartProvider.cartItems.containsKey(product.id);
+
+          return Container(
+            // decoration: BoxDecoration(color: Colors.red),
+            width: double.maxFinite,
+            // padding: EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: isInCart
+                        ? null
+                        : () {
+                            cartProvider.addToCart(product);
+
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   SnackBar(
+                            //       content:
+                            //           Text('${product.title} added to cart!')),
+                            // );
+                          },
+                    child: Container(
+                      height: 50,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // border: Border.all(color: Colors.black12),
+                      ),
+                      padding: EdgeInsets.all(12),
+                      child: Text(
+                        isInCart ? 'Added in Cart' : 'Add to Cart',
+                        style: TextStyle(
+                            color: isInCart ? Colors.green : Colors.black,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                      onTap: () {
+                        // cartProvider.addToCart(product);
+
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(
+                        //       content: Text('${product.title} added to cart!')),
+                        // );
+                      },
+                      child: Container(
+                        // margin: EdgeInsets.symmetric(horizontal: 8),
+                        height: 50,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                        ),
+                        padding: EdgeInsets.all(12),
+                        child: const Text(
+                          'Buy Now',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.w500),
+                        ),
+                      )),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
       appBar: AppBar(
         title: Text(product.title),
         backgroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        FullScreenImage(imageUrl: product.image),
-                  ),
-                );
-              },
-              child: Image.network(
-                product.image,
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+      body: ListView(
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FullScreenImage(imageUrl: product.image),
+                ),
+              );
+            },
+            child: Image.network(
+              product.image,
+              // height: 300,
+              // width: double.infinity,
+              fit: BoxFit.fitWidth,
             ),
-            const SizedBox(height: 16),
-            Text(
-              product.title,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '\$${product.price}',
-              style: const TextStyle(fontSize: 20, color: Colors.deepPurple),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              product.description,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            // Check if the product is already in the cart
-            Consumer<CartProvider>(
-              builder: (context, cartProvider, child) {
-                final isInCart = cartProvider.cartItems.containsKey(product.id);
-
-                return isInCart
-                    ? const Text(
-                        'Added in Cart',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : ElevatedButton(
-                        onPressed: () {
-                          // Add to cart using CartProvider
-                          cartProvider.addToCart(product);
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('${product.title} added to cart!')),
-                          );
-                        },
-                        child: const Text('Add to Cart'),
-                      );
-              },
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            product.title,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '\$${product.price}',
+            style: const TextStyle(fontSize: 20, color: Colors.deepPurple),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            product.description,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 100),
+          // Check if the product is already in the cart
+        ],
       ),
     );
   }
