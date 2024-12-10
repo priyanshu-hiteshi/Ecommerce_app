@@ -1,4 +1,6 @@
+import 'package:ecommerce/provider/cart_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart'; // Import the Product model
 import '../services/all_product_api.dart';
 import '../screen/product_detail.dart';
@@ -19,6 +21,17 @@ class ProductCard extends StatelessWidget {
             height: 50), // Assuming there's an image URL in the product model
         title: Text(product.title),
         subtitle: Text("\$${product.price.toString()}"),
+        trailing: IconButton(
+            onPressed: () {
+              context.read<CartProvider>().addToCart(product);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${product.title} added to cart!'),
+                ),
+              );
+            },
+            icon: const Icon(Icons.shopping_cart_checkout)),
         onTap: () {
           // Navigate to the product detail screen on tap
           // Navigator.push(
