@@ -1,5 +1,6 @@
 import 'package:ecommerce/main.dart';
 import 'package:ecommerce/provider/bottom_nav_bar_provider.dart';
+import 'package:ecommerce/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    // final userId = Provider.of<UserProvider>(context, listen: false).userId;
     futureUser =
         ProductService().fetchUser(); // Fetch user data when the screen loads
   }
@@ -123,7 +125,6 @@ class _ProfileState extends State<Profile> {
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(8),
-                     
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

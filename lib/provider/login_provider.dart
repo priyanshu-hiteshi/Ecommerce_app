@@ -1,31 +1,28 @@
-import 'dart:convert';
-import 'dart:ffi';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ecommerce/utils/helper-function/token_decode.dart';
 import 'package:flutter/material.dart';
 import '../services/authService.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider with ChangeNotifier {
   bool _isLoading = false;
-  String _errorMsg = ' ';
+  String _errorMsg = '';
   String _token = '';
 
   bool get isLoading => _isLoading;
   String get errorMsg => _errorMsg;
-
   String get token => _token;
 
   final Authservice _authservice = Authservice();
 
   Future<void> login(String username, String password) async {
     if (username.isEmpty || password.isEmpty) {
-      _errorMsg = "Please fill all the input field";
+      _errorMsg = "Please fill all the input fields";
       notifyListeners();
       return;
     }
 
     _isLoading = true;
-
     notifyListeners();
 
     try {
@@ -35,10 +32,20 @@ class LoginProvider with ChangeNotifier {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', _token);
+      JwtHelper.logTokenDetails();
 
-      _errorMsg = " ";
+      _errorMsg = '';
     } catch (e) {
-      print(errorMsg);
+      _errorMsg = 'Login failed. Please try again.';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
+  }
+
+  void resetState() {
+    _isLoading = false;
+    _errorMsg = '';
+    notifyListeners();
   }
 }

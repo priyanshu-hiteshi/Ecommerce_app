@@ -12,20 +12,21 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> {
   late Future<List<Product>> futureProducts;
-  String? selectedCategory; 
+  String? selectedCategory;
   List<String> categories = [
-    'electronics', 
+    'electronics',
     'jewelery',
     'men\'s clothing',
     'women\'s clothing',
   ];
 
+  get userId => null;
+
   @override
   void initState() {
     super.initState();
-    selectedCategory = categories[0]; 
-    fetchProducts(
-        category: selectedCategory); 
+    selectedCategory = categories[0];
+    fetchProducts(category: selectedCategory);
   }
 
   void fetchProducts({String? category}) {
@@ -86,7 +87,6 @@ class _CategoryState extends State<Category> {
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 1,
                       childAspectRatio: 2.7,
-                      
                     ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {

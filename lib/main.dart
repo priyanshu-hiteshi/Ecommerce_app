@@ -1,3 +1,5 @@
+import 'package:ecommerce/provider/login_provider.dart';
+import 'package:ecommerce/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +23,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
         // CartProvider for managing the cart functionality
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: MyApp(token: token),
     ),
