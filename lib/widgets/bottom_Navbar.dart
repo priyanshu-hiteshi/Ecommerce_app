@@ -1,14 +1,49 @@
+import 'package:ecommerce/services/all_product_api.dart';
+import 'package:ecommerce/utils/helper-function/token_decode.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/bottom_nav_bar_provider.dart';
-import '../provider/cart_provider.dart'; // Import CartProvider
+import '../provider/cart_provider.dart';
 import '../screen/Home.dart';
 import '../screen/user/profile.dart';
 import '../screen/category/category.dart';
 import '../screen/cart_screen.dart';
 
-class BottomNavbar extends StatelessWidget {
-  const BottomNavbar({super.key});
+class BottomNavbar extends StatefulWidget {
+  const BottomNavbar({Key? key}) : super(key: key);
+
+  @override
+  _BottomNavbarState createState() => _BottomNavbarState();
+}
+
+class _BottomNavbarState extends State<BottomNavbar> {
+  bool _isCartDataLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartData();
+  }
+
+  Future<void> _loadCartData() async {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    try {
+      final userId = await getUserId();
+      if (userId.isNotEmpty) {
+        await cartProvider.fetchCartByUserId(int.parse(userId));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to load cart data: $e")),
+      );
+    } finally {
+      setState(() {
+        _isCartDataLoaded = true;
+      });
+    }
+  }
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +58,9 @@ class BottomNavbar extends StatelessWidget {
     return Consumer<BottomNavBarProvider>(
       builder: (context, bottomNavProvider, child) {
         return Scaffold(
-          body: screens[
-              bottomNavProvider.currentIndex], // Display the selected screen
+          body: !_isCartDataLoaded
+              ? const Center(child: CircularProgressIndicator())
+              : screens[bottomNavProvider.currentIndex],
           bottomNavigationBar: Container(
             margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0),
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -40,13 +76,6 @@ class BottomNavbar extends StatelessWidget {
                 width: 0.2,
                 color: Colors.deepPurple,
               ),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black26,
-              //     blurRadius: 10,
-              //     offset: Offset(0, 0),
-              //   ),
-              // ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -109,18 +138,23 @@ class KNavBarIconButton extends StatelessWidget {
   final int index;
   final IconData iconData;
 
-  const KNavBarIconButton(
-      {super.key, required this.index, required this.iconData});
+  const KNavBarIconButton({
+    Key? key,
+    required this.index,
+    required this.iconData,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<BottomNavBarProvider>(
       builder: (context, bottomNavProvider, child) {
         return IconButton(
-          icon: Icon(iconData,
-              color: bottomNavProvider.currentIndex == index
-                  ? Colors.deepPurple
-                  : Colors.grey),
+          icon: Icon(
+            iconData,
+            color: bottomNavProvider.currentIndex == index
+                ? Colors.deepPurple
+                : Colors.grey,
+          ),
           onPressed: () => bottomNavProvider.updatedIndex(index),
         );
       },
